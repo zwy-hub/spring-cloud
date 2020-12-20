@@ -1,0 +1,36 @@
+server:
+  port: 3355
+
+spring:
+  application:
+    name: cloud-config-client
+  cloud:
+    config:
+      label: master
+      name: config
+      profile: dev
+      uri: http://localhost:3344
+
+#暴露监控端点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+eureka:
+  client:
+    #表示将自己注册进eureka server
+    register-with-eureka: true
+    #是否从eureka server抓取已有的注册信息，集群的时候可以配合ribbon使用负载均衡
+    fetchRegistry: true
+    service-url:
+      #注册地址
+      defaultZone: http://eureka7001.com:7001/eureka
+  instance:
+    instance-id: configclient3355
+    prefer-ip-address: true   #访问路径显示ip地址，方便调试
+#    一段时间内向server发送心跳包，默认30秒，最长等待时间默认90秒
+#    lease-renewal-interval-in-seconds: 30
+#    lease-expiration-duration-in-seconds: 90
+

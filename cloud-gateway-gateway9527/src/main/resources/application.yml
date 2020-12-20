@@ -1,0 +1,56 @@
+server:
+  port: 9527
+
+spring:
+  application:
+    name: cloud-gateway
+  cloud:
+    gateway:
+      #开启从注册中心动态创建动态路由的功能，利用微服务名进行路由，默认关闭
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: payment_routh   #路由id
+          #uri: http://localhost:8001    #路由uri
+          uri: lb://cloud-payment-service
+          predicates:
+            - Path=/test/**     #符合规则则进行路由
+            - Cookie=name, xiaoming
+
+        - id: payment_routh2
+          #uri: http://localhost:8001
+          uri: lb://cloud-payment-service
+          predicates:
+            - Path=/search/**
+
+        - id: payment_routh3
+          uri: http://news.baidu.com/guonei
+          predicates:
+            - Path=/guonei
+            #在该时间之后才能进行路由，后面的时区可以通过ZonedDateTime.now()获取
+            #- After=2017-01-20T17:42:47.789-07:00[America/Denver]
+            #- Before=2017-01-20T17:42:47.789-07:00[America/Denver]
+            #- Between=2017-01-20T17:42:47.789-07:00[America/Denver], 2017-01-21T17:42:47.789-07:00[America/Denver]
+            #
+            #
+            #
+
+
+eureka:
+  client:
+    #表示将自己注册进eureka server
+    register-with-eureka: true
+    #是否从eureka server抓取已有的注册信息，集群的时候可以配合ribbon使用负载均衡
+    fetchRegistry: true
+    service-url:
+      #注册地址
+      defaultZone: http://eureka7001.com:7001/eureka
+#      defaultZone: http://eureka7001.com:7001/eureka,http://eureka7002.com:7002/eureka
+  instance:
+    instance-id: gateway9527
+    prefer-ip-address: true   #访问路径显示ip地址，方便调试
+#    一段时间内向server发送心跳包，默认30秒，最长等待时间默认90秒
+#    lease-renewal-interval-in-seconds: 30
+#    lease-expiration-duration-in-seconds: 90
+
